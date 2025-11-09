@@ -54,7 +54,6 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 */
 static boolean CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
-   size_t brotherIndex;
    
    if(oNNode!= NULL) {
 
@@ -73,23 +72,6 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
             fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
             return FALSE;
          }
-
-         for (brotherIndex = ulIndex + 1; 
-            brotherIndex < Node_getNumChildren(oNNode);
-            brotherIndex++) {
-            Node_T oNBrother = NULL;
-            int iStatus = Node_getChild(oNNode, ulIndex, &oNBrother);
-            if(iStatus != SUCCESS) {
-               fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
-               return FALSE;
-            }
-            if (Path_comparePath(Node_getPath(oNChild), Node_getPath(oNBrother)) == 0) {
-               fprintf(stderr, "Two nodes with the same file path: %s\n",
-                   Path_getPathname(Node_getPath(oNChild)));
-               return FALSE;
-            }
-         }
-
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          if(!CheckerDT_treeCheck(oNChild))
@@ -99,9 +81,48 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    return TRUE;
 }
 
+/* Internal function to check no two nodes have the same path. 
+Returns FALSE if two nodes have the same absolute file path,
+ otherwise returns TRUE */
+static boolean CheckerDT_samePaths(Node_T oNNode, DynArray_T paths) {
+   
+   Path_T path;
+   size_t i;
+
+   if (oNNode == NULL) return TRUE;
+
+   path = Node_getPath(oNNode);
+   for (i = 0; i < DynArray_getLength(paths); i++) {
+      if (Path_comparePath(path, DynArray_get(paths, i)) == 0) {
+         fprintf(stderr, "Identical file paths not allowed: (%s)\n",
+                 Path_getPathname(path));
+         return FALSE;
+      }
+   }
+
+   DynArray_add(paths, path);
+   
+   for (i = 0; i < Node_getNumChildren(oNNode); i++) {
+      Node_T oNChild = NULL;
+      int iStatus = Node_getChild(oNNode, i, &oNChild);
+      if(iStatus != SUCCESS) {
+         fprintf(stderr,
+                 "getNumChildren claims more children than getChild returns\n");
+         return FALSE;
+      }
+      if (!CheckerDT_samePaths(oNChild, paths)) {
+         return FALSE;
+      }
+   }
+   return TRUE;
+}
+   
+
 /* see checkerDT.h for specification */
 boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
+   DynArray_T paths = DynArray_new(0);
+
 
    /* Sample check on a top-level data structure invariant:
       if the DT is not initialized, its count should be 0. */
@@ -112,5 +133,15 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
       }
 
    /* Now checks invariants recursively at each node from the root. */
-   return CheckerDT_treeCheck(oNRoot);
+   if (!CheckerDT_treeCheck(oNRoot)) {
+      return FALSE;
+   }
+
+   if (!CheckerDT_samePaths(oNRoot, paths)) {
+         DynArray_free(paths);
+         return FALSE;
+   }
+   DynArray_free(paths);
+
+   return TRUE;
 }
