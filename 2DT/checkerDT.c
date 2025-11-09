@@ -53,7 +53,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 */
 static boolean CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
-
+   size_t brotherIndex;
+   
    if(oNNode!= NULL) {
 
       /* Sample check on each node: node must be valid */
@@ -82,7 +83,7 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
                return FALSE;
             }
             if (Path_comparePath(Node_getPath(oNChild), Node_getPath(oNBrother)) == 0) {
-               fprintf("Two nodes with the same file path: %s\n",
+               fprintf(stderr, "Two nodes with the same file path: %s\n",
                    Path_getPathname(Node_getPath(oNChild)));
                return FALSE;
             }
