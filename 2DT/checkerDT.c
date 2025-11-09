@@ -31,10 +31,27 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       oPNPath = Node_getPath(oNNode);
       oPPPath = Node_getPath(oNParent);
 
+      /* Checks that path to root is one shorter for parent than for 
+         child */
       if(Path_getSharedPrefixDepth(oPNPath, oPPPath) !=
          Path_getDepth(oPNPath) - 1) {
          fprintf(stderr, "P-C nodes don't have P-C paths: (%s) (%s)\n",
                  Path_getPathname(oPPPath), Path_getPathname(oPNPath));
+         return FALSE;
+      }
+      /*s*/
+
+      for(size_t i = o; i<Node_getNumChilderen(oNParent); i++){
+         Node_T oChild = NULL;
+         Node_getChild(oNParent, i, &oChild);
+         if(oChild == oNNode) {
+            bFound = TRUE;
+            break;
+         }
+      }
+      if (!Bound) {
+         fprintf(stderr, "Parent does not list node %s as a child/n",
+                 Path_getPathName(Node_getPath(oNNode)));
          return FALSE;
       }
    }
