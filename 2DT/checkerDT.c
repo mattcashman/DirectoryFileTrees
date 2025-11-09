@@ -39,23 +39,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
                  Path_getPathname(oPPPath), Path_getPathname(oPNPath));
          return FALSE;
       }
-      /*s*/
-
-      for(size_t i = o; i<Node_getNumChilderen(oNParent); i++){
-         Node_T oChild = NULL;
-         Node_getChild(oNParent, i, &oChild);
-         if(oChild == oNNode) {
-            bFound = TRUE;
-            break;
-         }
-      }
-      if (!Bound) {
-         fprintf(stderr, "Parent does not list node %s as a child/n",
-                 Path_getPathName(Node_getPath(oNNode)));
-         return FALSE;
-      }
    }
-
    return TRUE;
 }
 
