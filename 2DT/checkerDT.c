@@ -72,6 +72,22 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
             return FALSE;
          }
 
+         for (brotherIndex = ulIndex + 1; 
+            brotherIndex < Node_getNumChildren(oNNode);
+            brotherIndex++) {
+            Node_T oNBrother = NULL;
+            int iStatus = Node_getChild(oNNode, ulIndex, &oNBrother);
+            if(iStatus != SUCCESS) {
+               fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
+               return FALSE;
+            }
+            if (Path_comparePath(Node_getPath(oNChild), Node_getPath(oNBrother)) == 0) {
+               fprintf("Two nodes with the same file path: %s\n",
+                   Path_getPathname(Node_getPath(oNChild)));
+               return FALSE;
+            }
+         }
+
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          if(!CheckerDT_treeCheck(oNChild))
