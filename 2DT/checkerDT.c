@@ -11,12 +11,18 @@
 #include "path.h"
 
 
+/* Variable to check ulCount is accurate - measured number of nodes.
+Incrimented in treeCheck and checked in main isValid function. */
+static size_t nodeCount;
+
 
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Node_T oNParent;
+   Node_T oNChild;
    Path_T oPNPath;
    Path_T oPPPath;
+   size_t numChildren;
 
    /* Sample check: a NULL pointer is not a valid node */
    if(oNNode == NULL) {
@@ -40,6 +46,14 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
          return FALSE;
       }
    }
+
+   /* Check that getNumChildren is accurate */
+   numChildren = Node_getNumChildren(oNNode);
+   if (Node_getChild(oNNode, numChildren, &oNChild) == SUCCESS) {
+      fprintf(stderr, "getNumChildren reports less children than getChild returns");
+      return FALSE;
+   }
+   
    return TRUE;
 }
 
@@ -56,7 +70,8 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
    
    if(oNNode!= NULL) {
-
+      nodeCount++;
+      
       /* Sample check on each node: node must be valid */
       /* If not, pass that failure back up immediately */
       if(!CheckerDT_Node_isValid(oNNode))
@@ -144,7 +159,7 @@ static boolean CheckerDT_samePaths(Node_T oNNode, DynArray_T paths) {
 boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
    DynArray_T paths = DynArray_new(0);
-
+   nodeCount = 0;
 
    /* Sample check on a top-level data structure invariant:
       if the DT is not initialized, its count should be 0. */
@@ -156,6 +171,13 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
 
    /* Now checks invariants recursively at each node from the root. */
    if (!CheckerDT_treeCheck(oNRoot)) {
+      return FALSE;
+   }
+
+   if (nodeCount != ulCount) {
+      fprintf(stderr,
+              "Incorrect number of nodes reported in DT: (%ld) found but (%ld) reported\n",
+              nodeCount, ulCount);
       return FALSE;
    }
 
