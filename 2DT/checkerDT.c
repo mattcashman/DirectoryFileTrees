@@ -62,6 +62,28 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
       if(!CheckerDT_Node_isValid(oNNode))
          return FALSE;
 
+      /* Check child nodes are in the right order */
+      if (Node_getNumChildren(oNNode) >= 2) {
+      for(ulIndex = 0;
+          ulIndex < Node_getNumChildren(oNNode) - 1;
+          ulIndex++) {
+         Node_T oNCurrChild = NULL;
+         Node_T oNNextChild = NULL;
+         if (Node_getChild(oNNode, ulIndex, &oNCurrChild) != SUCCESS ||
+             Node_getChild(oNNode, ulIndex+1, &oNNextChild) != SUCCESS)
+         {
+            fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
+            return FALSE;
+               }
+         if (Path_comparePath(Node_getPath(oNCurrChild),
+                              Node_getPath(oNNextChild)) > 0) {
+            fprintf(stderr, "Child nodes must be lexicographical order: (%s) and (%s)\n",
+                    Path_getPathname(Node_getPath(oNCurrChild)),
+                    Path_getPathname(Node_getPath(oNNextChild)));
+            return FALSE;
+         }
+      }}
+
       /* Recur on every child of oNNode */
       for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
       {
