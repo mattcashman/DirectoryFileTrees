@@ -109,7 +109,25 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
+checkerDT.c: (in function CheckerDT_isValid)
+checkerDT.c:180:15: Format argument 1 to fprintf (%ld) expects long int gets
+                       size_t: nodeCount
+  To allow arbitrary integral types to match long unsigned, use +longintegral.
+   checkerDT.c:179:61: Corresponding format code
+checkerDT.c:180:26: Format argument 2 to fprintf (%ld) expects long int gets
+                       size_t: ulCount
+   checkerDT.c:179:77: Corresponding format code
 
+We disagreed with this because we thought it was more readable and easy
+to understand the way we formatted the string than how they suggest.
+
+checkerDT.h:17:9: Function exported but not used outside checkerDT:
+                     CheckerDT_Node_isValid
+  A declaration is exported, but not used outside this module. Declaration can
+  use static qualifier. (Use -exportlocal to inhibit warning)
+   checkerDT.c:58:1: Definition of CheckerDT_Node_isValid
+
+This is not true - the good node implimentation uses this function.
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on checkerDT.c, and what are your
@@ -117,7 +135,14 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
+   checkerDT.c: line 89: low priority: 
+   This area is deeply nested at level 4, consider refactoring
 
+   checkerDT.c: line 94: low priority: 
+   This area is deeply nested at level 4, consider refactoring
+
+We disagreed because we had an for loop contained in an if loop to
+ensure indeces were in range and it didn't affect readability.
 
 ------------------------------------------------------------------------
 What warnings does splint generate on your Part 3 code, and what are

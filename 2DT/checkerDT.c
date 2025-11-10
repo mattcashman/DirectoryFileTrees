@@ -118,16 +118,19 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    return TRUE;
 }
 
-/* Internal function to check no two nodes have the same path. 
-Returns FALSE if two nodes have the same absolute file path,
- otherwise returns TRUE */
+/* Internal function to check no two nodes in the tree with root oNNode
+ have the same path. Returns FALSE if two nodes have the same absolute 
+file path in the array paths, otherwise returns TRUE */
 static boolean CheckerDT_samePaths(Node_T oNNode, DynArray_T paths) {
-   
+   /* path of the current node */   
    Path_T path;
+   /* index counter */
    size_t i;
 
+   /* Check node is worth checking */
    if (oNNode == NULL) return TRUE;
 
+   /* get path to node, check against paths array */
    path = Node_getPath(oNNode);
    for (i = 0; i < DynArray_getLength(paths); i++) {
       if (Path_comparePath(path, DynArray_get(paths, i)) == 0) {
@@ -138,7 +141,8 @@ static boolean CheckerDT_samePaths(Node_T oNNode, DynArray_T paths) {
    }
 
    DynArray_add(paths, path);
-   
+
+   /* iterate test for identical paths for all child nodes */
    for (i = 0; i < Node_getNumChildren(oNNode); i++) {
       Node_T oNChild = NULL;
       int iStatus = Node_getChild(oNNode, i, &oNChild);
