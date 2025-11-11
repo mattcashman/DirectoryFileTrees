@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
-/* dt.c                                                               */
-/* Author: Christopher Moretti                                        */
+/* ft.c                                                               */
+/* Author: Alex Perkins & Matt Cashman                                */
 /*--------------------------------------------------------------------*/
 
 #include <stddef.h>
@@ -11,9 +11,8 @@
 
 #include "dynarray.h"
 #include "path.h"
-#include "nodeDT.h"
-#include "checkerDT.h"
-#include "dt.h"
+#include "nodeFT.h"
+#include "ft.h"
 
 
 /*
@@ -32,14 +31,14 @@ static size_t ulCount;
 
 /* --------------------------------------------------------------------
 
-  The DT_traversePath and DT_findNode functions modularize the common
-  functionality of going as far as possible down an DT towards a path
+  The FT_traversePath and FT_findNode functions modularize the common
+  functionality of going as far as possible down an FT towards a path
   and returning either the node of however far was reached or the
   node if the full path was reached, respectively.
 */
 
 /*
-  Traverses the DT starting at the root as far as possible towards
+  Traverses the FT starting at the root as far as possible towards
   absolute path oPPath. If able to traverse, returns an int SUCCESS
   status and sets *poNFurthest to the furthest node reached (which may
   be only a prefix of oPPath, or even NULL if the root is NULL).
@@ -47,7 +46,7 @@ static size_t ulCount;
   * CONFLICTING_PATH if the root's path is not a prefix of oPPath
   * MEMORY_ERROR if memory could not be allocated to complete request
 */
-static int DT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
+static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
    int iStatus;
    Path_T oPPrefix = NULL;
    Node_T oNCurr;
@@ -111,16 +110,16 @@ static int DT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
 }
 
 /*
-  Traverses the DT to find a node with absolute path pcPath. Returns a
+  Traverses the FT to find a node with absolute path pcPath. Returns a
   int SUCCESS status and sets *poNResult to be the node, if found.
   Otherwise, sets *poNResult to NULL and returns with status:
-  * INITIALIZATION_ERROR if the DT is not in an initialized state
+  * INITIALIZATION_ERROR if the FT is not in an initialized state
   * BAD_PATH if pcPath does not represent a well-formatted path
   * CONFLICTING_PATH if the root's path is not a prefix of pcPath
   * NO_SUCH_PATH if no node with pcPath exists in the hierarchy
   * MEMORY_ERROR if memory could not be allocated to complete request
  */
-static int DT_findNode(const char *pcPath, Node_T *poNResult) {
+static int FT_findNode(const char *pcPath, Node_T *poNResult) {
    Path_T oPPath = NULL;
    Node_T oNFound = NULL;
    int iStatus;
@@ -139,7 +138,7 @@ static int DT_findNode(const char *pcPath, Node_T *poNResult) {
       return iStatus;
    }
 
-   iStatus = DT_traversePath(oPPath, &oNFound);
+   iStatus = FT_traversePath(oPPath, &oNFound);
    if(iStatus != SUCCESS)
    {
       Path_free(oPPath);
@@ -166,7 +165,7 @@ static int DT_findNode(const char *pcPath, Node_T *poNResult) {
 /*--------------------------------------------------------------------*/
 
 
-int DT_insert(const char *pcPath) {
+int FT_insert(const char *pcPath) {
    int iStatus;
    Path_T oPPath = NULL;
    Node_T oNFirstNew = NULL;
@@ -175,7 +174,6 @@ int DT_insert(const char *pcPath) {
    size_t ulNewNodes = 0;
 
    assert(pcPath != NULL);
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
 
    /* validate pcPath and generate a Path_T for it */
    if(!bIsInitialized)
@@ -186,7 +184,7 @@ int DT_insert(const char *pcPath) {
       return iStatus;
 
    /* find the closest ancestor of oPPath already in the tree */
-   iStatus= DT_traversePath(oPPath, &oNCurr);
+   iStatus= FT_traversePath(oPPath, &oNCurr);
    if(iStatus != SUCCESS)
    {
       Path_free(oPPath);
@@ -225,7 +223,6 @@ int DT_insert(const char *pcPath) {
          Path_free(oPPath);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
-         assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
          return iStatus;
       }
 
@@ -236,7 +233,6 @@ int DT_insert(const char *pcPath) {
          Path_free(oPPrefix);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
-         assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
          return iStatus;
       }
 
@@ -250,34 +246,32 @@ int DT_insert(const char *pcPath) {
    }
 
    Path_free(oPPath);
-   /* update DT state variables to reflect insertion */
+   /* update FT state variables to reflect insertion */
    if(oNRoot == NULL)
       oNRoot = oNFirstNew;
    ulCount += ulNewNodes;
 
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
    return SUCCESS;
 }
 
-boolean DT_contains(const char *pcPath) {
+boolean FT_contains(const char *pcPath) {
    int iStatus;
    Node_T oNFound = NULL;
 
    assert(pcPath != NULL);
 
-   iStatus = DT_findNode(pcPath, &oNFound);
+   iStatus = FT_findNode(pcPath, &oNFound);
    return (boolean) (iStatus == SUCCESS);
 }
 
 
-int DT_rm(const char *pcPath) {
+int FT_rm(const char *pcPath) {
    int iStatus;
    Node_T oNFound = NULL;
 
    assert(pcPath != NULL);
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
 
-   iStatus = DT_findNode(pcPath, &oNFound);
+   iStatus = FT_findNode(pcPath, &oNFound);
 
    if(iStatus != SUCCESS)
        return iStatus;
@@ -286,12 +280,10 @@ int DT_rm(const char *pcPath) {
    if(ulCount == 0)
       oNRoot = NULL;
 
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
    return SUCCESS;
 }
 
-int DT_init(void) {
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
+int FT_init(void) {
 
    if(bIsInitialized)
       return INITIALIZATION_ERROR;
@@ -300,12 +292,10 @@ int DT_init(void) {
    oNRoot = NULL;
    ulCount = 0;
 
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
    return SUCCESS;
 }
 
-int DT_destroy(void) {
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
+int FT_destroy(void) {
 
    if(!bIsInitialized)
       return INITIALIZATION_ERROR;
@@ -317,7 +307,6 @@ int DT_destroy(void) {
 
    bIsInitialized = FALSE;
 
-   assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
    return SUCCESS;
 }
 
@@ -325,7 +314,7 @@ int DT_destroy(void) {
 /* --------------------------------------------------------------------
 
   The following auxiliary functions are used for generating the
-  string representation of the DT.
+  string representation of the FT.
 */
 
 /*
@@ -333,7 +322,7 @@ int DT_destroy(void) {
   inserting each payload to DynArray_T d beginning at index i.
   Returns the next unused index in d after the insertion(s).
 */
-static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
+static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    size_t c;
 
    assert(d != NULL);
@@ -346,7 +335,7 @@ static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
          Node_T oNChild = NULL;
          iStatus = Node_getChild(n,c, &oNChild);
          assert(iStatus == SUCCESS);
-         i = DT_preOrderTraversal(oNChild, d, i);
+         i = FT_preOrderTraversal(oNChild, d, i);
       }
    }
    return i;
@@ -357,7 +346,7 @@ static size_t DT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
   to accumulate a string length, rather than returning the length of
   oNNode's path, and also always adds one addition byte to the sum.
 */
-static void DT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
+static void FT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
    assert(pulAcc != NULL);
 
    if(oNNode != NULL)
@@ -369,7 +358,7 @@ static void DT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
   order, appending oNNode's path onto pcAcc, and also always adds one
   newline at the end of the concatenated string.
 */
-static void DT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
+static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
    assert(pcAcc != NULL);
 
    if(oNNode != NULL) {
@@ -379,7 +368,7 @@ static void DT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
 }
 /*--------------------------------------------------------------------*/
 
-char *DT_toString(void) {
+char *FT_toString(void) {
    DynArray_T nodes;
    size_t totalStrlen = 1;
    char *result = NULL;
@@ -388,9 +377,9 @@ char *DT_toString(void) {
       return NULL;
 
    nodes = DynArray_new(ulCount);
-   (void) DT_preOrderTraversal(oNRoot, nodes, 0);
+   (void) FT_preOrderTraversal(oNRoot, nodes, 0);
 
-   DynArray_map(nodes, (void (*)(void *, void*)) DT_strlenAccumulate,
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strlenAccumulate,
                 (void*) &totalStrlen);
 
    result = malloc(totalStrlen);
@@ -400,7 +389,7 @@ char *DT_toString(void) {
    }
    *result = '\0';
 
-   DynArray_map(nodes, (void (*)(void *, void*)) DT_strcatAccumulate,
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strcatAccumulate,
                 (void *) result);
 
    DynArray_free(nodes);
