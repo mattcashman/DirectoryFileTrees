@@ -10,7 +10,7 @@
 #include "nodeFT.h"
 #include "checkerFT.h"
 
-/* A node in a DT */
+/* A node in a FT */
 struct node {
    /*determines whether it is a node or a directory*/
    enum NodeType type;
@@ -80,8 +80,8 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    assert(oPPath != NULL);
    /*assert(oNParent == NULL);*/
 
+   /* returns Flase if */
    if(oNParent != NULL && Nodetype != DIR) {
-      *poNResult = NULL;
       return FALSE;
    }
 
@@ -167,8 +167,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
 
    *poNResult = psNew;
 
-   assert(oNParent == NULL || CheckerDT_Node_isValid(oNParent));
-   assert(CheckerDT_Node_isValid(*poNResult));
+
 
    return SUCCESS;
 }
@@ -178,7 +177,6 @@ size_t Node_free(Node_T oNNode) {
    size_t ulCount = 0;
 
    assert(oNNode != NULL);
-   assert(CheckerDT_Node_isValid(oNNode));
 
    /* remove from parent's list */
    if(oNNode->oNParent != NULL) {
