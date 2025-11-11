@@ -7,8 +7,8 @@
 #include <assert.h>
 #include <string.h>
 #include "dynarray.h"
-#include "nodeDT.h"
-#include "checkerDT.h"
+#include "nodeFT.h"
+#include "checkerFT.h"
 
 /* A node in a DT */
 struct node {
@@ -78,7 +78,12 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    int iStatus;
 
    assert(oPPath != NULL);
-   assert(oNParent == NULL || CheckerDT_Node_isValid(oNParent));
+   /*assert(oNParent == NULL);*/
+
+   if(oNParent != NULL && Nodetype != DIR) {
+      *poNResult = NULL;
+      return FALSE;
+   }
 
    /* allocate space for a new node */
    psNew = malloc(sizeof(struct node));
