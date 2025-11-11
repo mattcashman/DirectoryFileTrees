@@ -12,6 +12,8 @@
 
 /* A node in a DT */
 struct node {
+   /*determines whether it is a node or a directory*/
+   enum NodeType type;
    /* the object corresponding to the node's absolute path */
    Path_T oPPath;
    /* this node's parent */
@@ -259,4 +261,9 @@ char *Node_toString(Node_T oNNode) {
       return NULL;
    else
       return strcpy(copyPath, Path_getPathname(Node_getPath(oNNode)));
+}
+
+enum NodeType Node_getType(Node_T node) {
+   assert(node != NULL);
+   return node->type;
 }

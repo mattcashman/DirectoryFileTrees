@@ -14,6 +14,8 @@
 /* A Node_T is a node in a Directory Tree */
 typedef struct node *Node_T;
 
+enum NodeType {DIR, FILE};
+
 /*
   Creates a new node in the Directory Tree, with path oPPath and
   parent oNParent. Returns an int SUCCESS status and sets *poNResult
