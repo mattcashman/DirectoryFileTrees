@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* nodeDT.c                                                           */
-/* Author: Christopher Moretti                                        */
+/* Author: Alexander Perkins and Matt Cashman                         */
 /*--------------------------------------------------------------------*/
 
 #include <stdlib.h>
@@ -20,6 +20,10 @@ struct node {
    Node_T oNParent;
    /* the object containing links to this node's children */
    DynArray_T oDChildren;
+   /* pointer to contents if file */
+   void *contents;
+   /*the size of each indivdual node*/
+   size_t contentSize;
 };
 
 
@@ -281,4 +285,10 @@ void* Node_getContents(Node_T oNNode) {
    assert(oNNode != NULL);
    assert(oNNode->type == FILE);
    return oNNode->contents;
+}
+
+size_t Node_getContentSize(Node_t oNNode) {
+   assert(oNNode != NULL);
+   assert(oNNode->type == FILE);
+   return oNNode->contentsize;
 }

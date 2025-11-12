@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* nodeDT.h                                                           */
-/* Author: Christopher Moretti                                        */
+/* Author: Alex Perkins and Matt Cashman                              */
 /*--------------------------------------------------------------------*/
 
 #ifndef NODE_INCLUDED
@@ -91,5 +91,8 @@ enum NodeType Node_getType(Node_T oNNode);
 
 /*Function creates a pointer to the contents of a certain with a FILE*/
 void *Node_getContents(Node_T oNNode);
+
+/*Function returns the number of memory bytes associated with each individual node*/
+size_t Node_getContentSize(Node_T oNNode);
 
 #endif
