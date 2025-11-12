@@ -217,12 +217,14 @@ int FT_insertDir(const char *pcPath) {
       Path_T oPPrefix = NULL;
       Node_T oNNewNode = NULL;
       
-      /* check the parent node is a directory */
-      if(Node_getType(oNCurr) != DIR_T) {
+      /* check the parent node is a directory or NULL */
+      if(oNCurr != NULL) {
+        if(Node_getType(oNCurr) != DIR_T) {
          Path_free(oPPath);
          return NOT_A_DIRECTORY;
+        }
       }
-
+      
       /* generate a Path_T for this level */
       iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
       if(iStatus != SUCCESS) {
