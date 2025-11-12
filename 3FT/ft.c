@@ -227,7 +227,7 @@ int FT_insertDir(const char *pcPath) {
       }
 
       /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode);
+      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, DIR, NULL, NULL);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
@@ -318,8 +318,8 @@ int FT_insertFile(const char *pcPath, void *pvContents,
       }
 
       /* insert the new node for this level */
-/* CHANGE WHEN NODE_NEW CHANGES */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode);
+      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FILE, pvContents,
+                        ulLength);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
@@ -482,13 +482,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
     if (Node_getType != FILE)
       return NULL;
 
-/* CALL GETTER AND SETTER OF NODE FOR CONTENTS */
-
-    pvOldContents = Node_getContents;
-
-    iStatus = Node_setContents(oNNode, pvNewContents);
-    if(iStatus != SUCCESS)
-       return NULL;
+    pvOldContents = Node_setContents(oNNode, pvNewContents, ulNewLength);
 
     return pvOldContents;
 }

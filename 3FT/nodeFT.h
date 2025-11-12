@@ -28,7 +28,9 @@ enum NodeType {DIR, FILE};
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype, ulsize contentSize, void* contents);
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, 
+            enum NodeType Nodetype, size_t contentSize, 
+            void* contents);
 
 /*
   Destroys and frees all memory allocated for the subtree rooted at
@@ -86,15 +88,21 @@ int Node_compare(Node_T oNFirst, Node_T oNSecond);
 */
 char *Node_toString(Node_T oNNode);
 
-/*Function returns type of the node whether it is DIR or FILE */
+/* Returns type of oNNode: either DIR or FILE */
 enum NodeType Node_getType(Node_T oNNode);
 
-/*Function creates a pointer to the contents of a certain with a FILE*/
+/* Returns a pointer to the contents of oNNode or NULL if oNNode is a
+directory */
 void *Node_getContents(Node_T oNNode);
 
-/*Function returns the number of memory bytes associated with each individual node*/
+/* Returns the number of bytes associated with oNNode or NULL if oNNode
+ is a directory */
 size_t Node_getContentSize(Node_T oNNode);
 
-void* Node_SetContents(Node_T oNNode, void* newContents, size_t contentSize);
+/* Sets the contents of oNNode to newContents if possible and set the 
+size of the node to contentSize and returns the previous contents oNNode.
+Returns NULL if not possible. */
+void* Node_setContents(Node_T oNNode, void* newContents, 
+                      size_t contentSize);
 
 #endif

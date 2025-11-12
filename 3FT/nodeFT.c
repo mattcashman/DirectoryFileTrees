@@ -36,7 +36,7 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
    assert(oNParent != NULL);
    assert(oNChild != NULL);
 
-   if(oNParent -> Nodetype != DIR) {
+   if(oNParent->type != DIR) {
       return FALSE;
    }
 
@@ -72,7 +72,8 @@ static int Node_compareString(const Node_T oNFirst,
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype, ulSize contentSize, void* contents) {
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, 
+   enum NodeType Nodetype, size_t contentSize, void* contents) {
    struct node *psNew;
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
@@ -84,7 +85,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType No
    /*assert(oNParent == NULL);*/
 
    /* returns Flase if */
-   if(oNParent != NULL && oNParent->Nodetype != DIR) {
+   if(oNParent != NULL && oNParent->type != DIR) {
       return FALSE;
    }
 
@@ -218,7 +219,7 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
    assert(oNParent != NULL);
    assert(oPPath != NULL);
    assert(pulChildID != NULL);
-   assert(oNParent -> Nodetype == DIR);
+   assert(oNParent->type == DIR);
 
    /* *pulChildID is the index into oNParent->oDChildren */
    return DynArray_bsearch(oNParent->oDChildren,
@@ -228,7 +229,7 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
 
 size_t Node_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
-   assert(oNParent -> Nodetype == DIR);
+   assert(oNParent->type == DIR);
 
    return DynArray_getLength(oNParent->oDChildren);
 }
@@ -286,30 +287,21 @@ void* Node_getContents(Node_T oNNode) {
    return oNNode->contents;
 }
 
-size_t Node_getContentSize(Node_t oNNode) {
+size_t Node_getContentSize(Node_T oNNode) {
    assert(oNNode != NULL);
    assert(oNNode->type == FILE);
-   return oNNode->contentsize;
+   return oNNode->contentSize;
 }
 
-void* Node_SetContents(Node_T oNNode, void* newContents, size_t contentSize) {
+void* Node_setContents(Node_T oNNode, void* newContents, size_t contentSize) {
+   void *pvOldContents;
    assert(oNNode != NULL);
    assert(oNNode->type == FILE);
 
-   /*free previous contents if they exist*/
-   if(oNNode->contents != NULL) {
-      free(oNNode->contents);
-   }
+   pvOldContents = oNNode->contents;
 
-   /* gets the memory space for the new contents*/
-   oNNode->newContents = malloc(contentSize);
-   if(oNNode->contents == NULL) {
-      oNNode->contentSize = 0;
-      return NULL;
-   }
-
-   memcpy(oNNode->contents, newContents, contentSize);
+   oNNode->contents = newContents;
    oNNode->contentSize = contentSize;
 
-   return oNNode->contents;
+   return pvOldContents;
 }
