@@ -216,6 +216,12 @@ int FT_insertDir(const char *pcPath) {
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
       Node_T oNNewNode = NULL;
+      
+      /* check the parent node is a directory */
+      if(Node_getType(oNCurr) != DIR_T) {
+         Path_free(oPPath);
+         return NOT_A_DIRECTORY;
+      }
 
       /* generate a Path_T for this level */
       iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
@@ -225,6 +231,7 @@ int FT_insertDir(const char *pcPath) {
             (void) Node_free(oNFirstNew);
          return iStatus;
       }
+
 
       /* insert the new node for this level */
       iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, DIR_T, 0, NULL);
@@ -304,6 +311,12 @@ int FT_insertFile(const char *pcPath, void *pvContents,
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
       Node_T oNNewNode = NULL;
+
+      /* check the parent node is a directory */
+      if(Node_getType(oNCurr) != DIR_T) {
+         Path_free(oPPath);
+         return NOT_A_DIRECTORY;
+      }
 
       /* generate a Path_T for this level */
       iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
