@@ -355,6 +355,10 @@ boolean FT_containsDir(const char *pcPath) {
    assert(pcPath != NULL);
 
    iStatus = FT_findNode(pcPath, &oNFound);
+
+   if(Node_getType(oNFound) != DIR)
+       iStatus = NOT_A_DIRECTORY;
+    
    return (boolean) (iStatus == SUCCESS);
 }
 
@@ -365,6 +369,10 @@ boolean FT_containsFile(const char *pcPath) {
    assert(pcPath != NULL);
 
    iStatus = FT_findNode(pcPath, &oNFound);
+
+   if(Node_getType(oNFound) != FILE)
+      iStatus = NOT_A_FILE;
+    
    return (boolean) (iStatus == SUCCESS);
 }
 
@@ -380,7 +388,9 @@ int FT_rmDir(const char *pcPath) {
    if(iStatus != SUCCESS)
        return iStatus;
 
-/* CHANGE IF NODE_FREE CHANGES - SEE OTHER OCCURANCES */
+   if(Node_getType(oNFound) != DIR)
+       return NOT_A_DIRECTORY;
+
    ulCount -= Node_free(oNFound);
    if(ulCount == 0)
       oNRoot = NULL;
@@ -399,7 +409,9 @@ int FT_rmFile(const char *pcPath) {
    if(iStatus != SUCCESS)
        return iStatus;
 
-/* CHANGE IF NODE_FREE CHANGES - SEE OTHER OCCURANCES */
+   if(Node_getType != FILE)
+       return NOT_A_FILE;
+
    ulCount -= Node_free(oNFound);
    if(ulCount == 0)
       oNRoot = NULL;
@@ -434,6 +446,77 @@ int FT_destroy(void) {
    return SUCCESS;
 }
 
+void *FT_getFileContents(const char *pcPath) 
+{
+    Path_T oPPath;
+    Node_T oNNode;
+    int iStatus;
+    
+    if(bIsInitialized)
+      return NULL;
+
+    iStatus = FT_findNode(pcPath, &oNNode);
+    if(iStatus != SUCCESS)
+      return NULL;
+
+    if (Node_getType != FILE)
+      return NULL;
+
+    return Node_getContents(oNNode);
+}
+
+void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
+                             size_t ulNewLength) 
+{
+    Node_T oNNode;
+    void *pvOldContents;
+    int iStatus;
+    
+    if(bIsInitialized)
+      return NULL;
+
+    iStatus = FT_findNode(pcPath, &oNNode);
+    if(iStatus != SUCCESS)
+      return NULL;
+
+    if (Node_getType != FILE)
+      return NULL;
+
+/* CALL GETTER AND SETTER OF NODE FOR CONTENTS */
+
+    pvOldContents = Node_getContents;
+
+    iStatus = Node_setContents(oNNode, pvNewContents);
+    if(iStatus != SUCCESS)
+       return NULL;
+
+    return pvOldContents;
+}
+
+
+int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) 
+{
+    Node_T oNNode;
+    void *pvOldContents;
+    int iStatus;
+    
+    if(bIsInitialized)
+      return INITIALIZATION_ERROR;
+
+    iStatus = FT_findNode(pcPath, &oNNode);
+    if(iStatus != SUCCESS)
+      return iStatus;
+
+    if (Node_getType(oNNode) == FILE) {
+        *pbIsFile = TRUE;
+        *pulSize = Node_getContentSize(oNNode);
+    } else {
+        *pbIsFile = FALSE;
+    }
+     
+    return SUCCESS;
+}
+
 
 /* --------------------------------------------------------------------
 
@@ -451,6 +534,8 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    DynArray_T childDirs;
 
    assert(d != NULL);
+
+   childDirs = DynArray_new(0);
 
    if(n != NULL) {
       (void) DynArray_set(d, i, n);
@@ -472,6 +557,8 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
         i = FT_preOrderTraversal(DynArray_get(childDirs, c), d, i);
       }
    }
+
+   DynArray_free(childDirs);
    return i;
 }
 
