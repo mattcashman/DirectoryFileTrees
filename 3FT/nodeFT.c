@@ -33,7 +33,7 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
    assert(oNParent != NULL);
    assert(oNChild != NULL);
 
-   if(Nodetype != DIR) {
+   if(oNParent -> Nodetype != DIR) {
       return FALSE;
    }
 
@@ -69,7 +69,7 @@ static int Node_compareString(const Node_T oNFirst,
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype) {
    struct node *psNew;
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
@@ -81,7 +81,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    /*assert(oNParent == NULL);*/
 
    /* returns Flase if */
-   if(oNParent != NULL && Nodetype != DIR) {
+   if(oNParent != NULL && oNParent->Nodetype != DIR) {
       return FALSE;
    }
 
@@ -145,6 +145,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    }
    psNew->oNParent = oNParent;
 
+   /*might need to add condition that it is a file type*/
    /* initialize the new node */
    psNew->oDChildren = DynArray_new(0);
    if(psNew->oDChildren == NULL) {
@@ -206,7 +207,6 @@ size_t Node_free(Node_T oNNode) {
 
 Path_T Node_getPath(Node_T oNNode) {
    assert(oNNode != NULL);
-
    return oNNode->oPPath;
 }
 
@@ -215,6 +215,7 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
    assert(oNParent != NULL);
    assert(oPPath != NULL);
    assert(pulChildID != NULL);
+   assert(oNParent -> Nodetype == DIR);
 
    /* *pulChildID is the index into oNParent->oDChildren */
    return DynArray_bsearch(oNParent->oDChildren,
@@ -224,6 +225,7 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
 
 size_t Node_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
+   assert(oNParent -> Nodetype == DIR);
 
    return DynArray_getLength(oNParent->oDChildren);
 }
@@ -273,4 +275,10 @@ char *Node_toString(Node_T oNNode) {
 enum NodeType Node_getType(Node_T node) {
    assert(node != NULL);
    return node->type;
+}
+
+void* Node_getContents(Node_T oNNode) {
+   assert(oNNode != NULL);
+   assert(oNNode->type == FILE);
+   return oNNode->contents;
 }

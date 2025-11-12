@@ -89,4 +89,7 @@ char *Node_toString(Node_T oNNode);
 /*Function returns type of the node whether it is DIR or FILE */
 enum NodeType Node_getType(Node_T oNNode);
 
+/*Function creates a pointer to the contents of a certain with a FILE*/
+void *Node_getContents(Node_T oNNode);
+
 #endif
