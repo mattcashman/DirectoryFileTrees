@@ -82,11 +82,10 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    int iStatus;
 
    assert(oPPath != NULL);
-   /*assert(oNParent == NULL);*/
 
-   /* returns Flase if */
+   /* Check node's parents is a directory */
    if(oNParent != NULL && oNParent->type != DIR) {
-      return FALSE;
+      return BAD_PATH;
    }
 
    /* allocate space for a new node */
@@ -139,6 +138,13 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    }
    else {
       /* new node must be root */
+      /* root node must be a directory */
+      if(Nodetype != DIR) {
+         Path_free(psNew->oPPath);
+         free(psNew);
+         *poNResult = NULL;
+         return NOT_A_DIRECTORY;
+      }
       /* can only create one "level" at a time */
       if(Path_getDepth(psNew->oPPath) != 1) {
          Path_free(psNew->oPPath);
@@ -149,15 +155,31 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    }
    psNew->oNParent = oNParent;
 
-   /*might need to add condition that it is a file type*/
    /* initialize the new node */
-   psNew->oDChildren = DynArray_new(0);
-   if(psNew->oDChildren == NULL) {
-      Path_free(psNew->oPPath);
-      free(psNew);
-      *poNResult = NULL;
-      return MEMORY_ERROR;
+   if (Nodetype == DIR) {
+      psNew->type = Nodetype;
+      if(contents != NULL || contentSize != NULL) {
+         Path_free(psNew->oPPath);
+         free(psNew);
+         *poNResult = NULL;
+         return NOT_A_FILE;
+      }
+      psNew->oDChildren = DynArray_new(0);
+      if(psNew->oDChildren == NULL) {
+         Path_free(psNew->oPPath);
+         free(psNew);
+         *poNResult = NULL;
+         return MEMORY_ERROR;
+      }
+      psNew->contents = NULL;
+      psNew->contentSize = NULL;
+   } else {
+      psNew->type = FILE;
+      psNew->oDChildren = NULL;
+      psNew->contents = contents;
+      psNew->contentSize = contentSize;
    }
+   
 
    /* Link into parent's children list */
    if(oNParent != NULL) {
@@ -171,9 +193,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    }
 
    *poNResult = psNew;
-
-
-
    return SUCCESS;
 }
 
