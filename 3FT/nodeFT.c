@@ -36,7 +36,7 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
    assert(oNParent != NULL);
    assert(oNChild != NULL);
 
-   if(oNParent->type != DIR) {
+   if(oNParent->type != DIR_T) {
       return NOT_A_DIRECTORY;
    }
 
@@ -84,7 +84,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    assert(oPPath != NULL);
 
    /* Check node's parents is a directory */
-   if(oNParent != NULL && oNParent->type != DIR) {
+   if(oNParent != NULL && oNParent->type != DIR_T) {
       return BAD_PATH;
    }
 
@@ -139,7 +139,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    else {
       /* new node must be root */
       /* root node must be a directory */
-      if(Nodetype != DIR) {
+      if(Nodetype != DIR_T) {
          Path_free(psNew->oPPath);
          free(psNew);
          *poNResult = NULL;
@@ -156,9 +156,9 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
    psNew->oNParent = oNParent;
 
    /* initialize the new node */
-   if (Nodetype == DIR) {
+   if (Nodetype == DIR_T) {
       psNew->type = Nodetype;
-      if(contents != NULL || contentSize != NULL) {
+      if(contents != NULL || contentSize != 0) {
          Path_free(psNew->oPPath);
          free(psNew);
          *poNResult = NULL;
@@ -172,9 +172,9 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
          return MEMORY_ERROR;
       }
       psNew->contents = NULL;
-      psNew->contentSize = NULL;
+      psNew->contentSize = 0;
    } else {
-      psNew->type = FILE;
+      psNew->type = FILE_T;
       psNew->oDChildren = NULL;
       psNew->contents = contents;
       psNew->contentSize = contentSize;
@@ -213,7 +213,7 @@ size_t Node_free(Node_T oNNode) {
                                   ulIndex);
    }
 
-   if (oNNode->type == DIR) {
+   if (oNNode->type == DIR_T) {
       /* recursively remove children */
       while(DynArray_getLength(oNNode->oDChildren) != 0) {
          ulCount += Node_free(DynArray_get(oNNode->oDChildren, 0));
@@ -242,7 +242,7 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
    assert(oPPath != NULL);
    assert(pulChildID != NULL);
    
-   if(oNParent->type != DIR) {
+   if(oNParent->type != DIR_T) {
       return FALSE;
    }
 
@@ -254,8 +254,8 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
 
 size_t Node_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
-   if(oNParent->type != DIR) {
-      return NULL;
+   if(oNParent->type != DIR_T) {
+      return (size_t) NULL;
    }
 
    return DynArray_getLength(oNParent->oDChildren);
@@ -267,7 +267,7 @@ int  Node_getChild(Node_T oNParent, size_t ulChildID,
    assert(oNParent != NULL);
    assert(poNResult != NULL);
    
-   if(oNParent->type != DIR) {
+   if(oNParent->type != DIR_T) {
       return NOT_A_DIRECTORY;
    }
 
@@ -314,7 +314,7 @@ enum NodeType Node_getType(Node_T node) {
 
 void* Node_getContents(Node_T oNNode) {
    assert(oNNode != NULL);
-   if(oNNode->type != FILE) {
+   if(oNNode->type != FILE_T) {
       return NULL;
    }
    return oNNode->contents;
@@ -322,8 +322,8 @@ void* Node_getContents(Node_T oNNode) {
 
 size_t Node_getContentSize(Node_T oNNode) {
    assert(oNNode != NULL);
-   if(oNNode->type != FILE) {
-      return NULL;
+   if(oNNode->type != FILE_T) {
+      return (size_t) NULL;
    }
    return oNNode->contentSize;
 }
@@ -331,7 +331,7 @@ size_t Node_getContentSize(Node_T oNNode) {
 void* Node_setContents(Node_T oNNode, void* newContents, size_t contentSize) {
    void *pvOldContents;
    assert(oNNode != NULL);
-   if(oNNode->type != FILE) {
+   if(oNNode->type != FILE_T) {
       return NULL;
    }
 

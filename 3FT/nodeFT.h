@@ -14,7 +14,7 @@
 /* A Node_T is a node in a File Tree */
 typedef struct node *Node_T;
 
-enum NodeType {DIR, FILE};
+enum NodeType {DIR_T, FILE_T};
 
 /*
   Creates a new node in the File Tree, with path oPPath,

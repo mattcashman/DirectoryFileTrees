@@ -227,7 +227,7 @@ int FT_insertDir(const char *pcPath) {
       }
 
       /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, DIR, NULL, NULL);
+      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, DIR_T, 0, NULL);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
@@ -289,7 +289,7 @@ int FT_insertFile(const char *pcPath, void *pvContents,
 
 
     /* Check oNCurr is a directory, not a file*/
-    if(Node_getType(oNCurr) != DIR) {
+    if(Node_getType(oNCurr) != DIR_T) {
         Path_free(oPPath);
         return NOT_A_DIRECTORY;
     }
@@ -311,8 +311,8 @@ int FT_insertFile(const char *pcPath, void *pvContents,
    }
    
     /* insert the new node for this level */
-    iStatus = Node_new(oPPath, oNCurr, &oNNewNode, FILE, pvContents,
-                      ulLength);
+    iStatus = Node_new(oPPath, oNCurr, &oNNewNode, FILE_T, ulLength, 
+                       pvContents);
     if(iStatus != SUCCESS) {
        Path_free(oPPath);
        if(oNNewNode != NULL)
@@ -337,7 +337,7 @@ boolean FT_containsDir(const char *pcPath) {
 
    iStatus = FT_findNode(pcPath, &oNFound);
 
-   if(Node_getType(oNFound) != DIR)
+   if(Node_getType(oNFound) != DIR_T)
        iStatus = NOT_A_DIRECTORY;
     
    return (boolean) (iStatus == SUCCESS);
@@ -351,7 +351,7 @@ boolean FT_containsFile(const char *pcPath) {
 
    iStatus = FT_findNode(pcPath, &oNFound);
 
-   if(Node_getType(oNFound) != FILE)
+   if(Node_getType(oNFound) != FILE_T)
       iStatus = NOT_A_FILE;
     
    return (boolean) (iStatus == SUCCESS);
@@ -369,7 +369,7 @@ int FT_rmDir(const char *pcPath) {
    if(iStatus != SUCCESS)
        return iStatus;
 
-   if(Node_getType(oNFound) != DIR)
+   if(Node_getType(oNFound) != DIR_T)
        return NOT_A_DIRECTORY;
 
    ulCount -= Node_free(oNFound);
@@ -390,7 +390,7 @@ int FT_rmFile(const char *pcPath) {
    if(iStatus != SUCCESS)
        return iStatus;
 
-   if(Node_getType != FILE)
+   if(Node_getType(oNFound) != FILE_T)
        return NOT_A_FILE;
 
    ulCount -= Node_free(oNFound);
@@ -440,7 +440,7 @@ void *FT_getFileContents(const char *pcPath)
     if(iStatus != SUCCESS)
       return NULL;
 
-    if (Node_getType != FILE)
+    if (Node_getType(oNNode) != FILE_T)
       return NULL;
 
     return Node_getContents(oNNode);
@@ -460,7 +460,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
     if(iStatus != SUCCESS)
       return NULL;
 
-    if (Node_getType != FILE)
+    if (Node_getType(oNNode) != FILE_T)
       return NULL;
 
     pvOldContents = Node_setContents(oNNode, pvNewContents, ulNewLength);
@@ -472,7 +472,6 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) 
 {
     Node_T oNNode;
-    void *pvOldContents;
     int iStatus;
     
     if(bIsInitialized)
@@ -482,7 +481,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize)
     if(iStatus != SUCCESS)
       return iStatus;
 
-    if (Node_getType(oNNode) == FILE) {
+    if (Node_getType(oNNode) == FILE_T) {
         *pbIsFile = TRUE;
         *pulSize = Node_getContentSize(oNNode);
     } else {
@@ -521,7 +520,7 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
          iStatus = Node_getChild(n,c, &oNChild);
          assert(iStatus == SUCCESS);
 
-         if (Node_getType(oNChild) == DIR) {
+         if (Node_getType(oNChild) == DIR_T) {
             DynArray_add(childDirs, oNChild);
          } else {
             DynArray_set(d, i, oNChild);
