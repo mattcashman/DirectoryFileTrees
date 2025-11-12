@@ -37,7 +37,7 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
    assert(oNChild != NULL);
 
    if(oNParent->type != DIR) {
-      return FALSE;
+      return NOT_A_DIRECTORY;
    }
 
    if(DynArray_addAt(oNParent->oDChildren, ulIndex, oNChild))
@@ -213,11 +213,14 @@ size_t Node_free(Node_T oNNode) {
                                   ulIndex);
    }
 
-   /* recursively remove children */
-   while(DynArray_getLength(oNNode->oDChildren) != 0) {
-      ulCount += Node_free(DynArray_get(oNNode->oDChildren, 0));
+   if (oNNode->type == DIR) {
+      /* recursively remove children */
+      while(DynArray_getLength(oNNode->oDChildren) != 0) {
+         ulCount += Node_free(DynArray_get(oNNode->oDChildren, 0));
+      }
+      DynArray_free(oNNode->oDChildren);
    }
-   DynArray_free(oNNode->oDChildren);
+   
 
    /* remove path */
    Path_free(oNNode->oPPath);
@@ -238,7 +241,10 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
    assert(oNParent != NULL);
    assert(oPPath != NULL);
    assert(pulChildID != NULL);
-   assert(oNParent->type == DIR);
+   
+   if(oNParent->type != DIR) {
+      return FALSE;
+   }
 
    /* *pulChildID is the index into oNParent->oDChildren */
    return DynArray_bsearch(oNParent->oDChildren,
@@ -248,7 +254,9 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
 
 size_t Node_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
-   assert(oNParent->type == DIR);
+   if(oNParent->type != DIR) {
+      return NULL;
+   }
 
    return DynArray_getLength(oNParent->oDChildren);
 }
@@ -258,6 +266,10 @@ int  Node_getChild(Node_T oNParent, size_t ulChildID,
 
    assert(oNParent != NULL);
    assert(poNResult != NULL);
+   
+   if(oNParent->type != DIR) {
+      return NOT_A_DIRECTORY;
+   }
 
    /* ulChildID is the index into oNParent->oDChildren */
    if(ulChildID >= Node_getNumChildren(oNParent)) {
@@ -302,20 +314,26 @@ enum NodeType Node_getType(Node_T node) {
 
 void* Node_getContents(Node_T oNNode) {
    assert(oNNode != NULL);
-   assert(oNNode->type == FILE);
+   if(oNNode->type != FILE) {
+      return NULL;
+   }
    return oNNode->contents;
 }
 
 size_t Node_getContentSize(Node_T oNNode) {
    assert(oNNode != NULL);
-   assert(oNNode->type == FILE);
+   if(oNNode->type != FILE) {
+      return NULL;
+   }
    return oNNode->contentSize;
 }
 
 void* Node_setContents(Node_T oNNode, void* newContents, size_t contentSize) {
    void *pvOldContents;
    assert(oNNode != NULL);
-   assert(oNNode->type == FILE);
+   if(oNNode->type != FILE) {
+      return NULL;
+   }
 
    pvOldContents = oNNode->contents;
 

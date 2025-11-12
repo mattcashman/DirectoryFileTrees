@@ -11,14 +11,15 @@
 #include "path.h"
 
 
-/* A Node_T is a node in a Directory Tree */
+/* A Node_T is a node in a File Tree */
 typedef struct node *Node_T;
 
 enum NodeType {DIR, FILE};
 
 /*
-  Creates a new node in the Directory Tree, with path oPPath and
-  parent oNParent. Returns an int SUCCESS status and sets *poNResult
+  Creates a new node in the File Tree, with path oPPath,
+  parent oNParent, type Nodetype, size contentSize, and containing
+  contents. Returns an int SUCCESS status and sets *poNResult
   to be the new node if successful. Otherwise, sets *poNResult to NULL
   and returns status:
   * MEMORY_ERROR if memory could not be allocated to complete request
@@ -27,6 +28,8 @@ enum NodeType {DIR, FILE};
                  or oNParent's path is not oPPath's direct parent
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
+  * NOT_A_FILE if type is DIR and contents or contentsSize is not NULL
+  * NOT_A_DIRECTORY if type is FILE and the root of the FT
 */
 int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, 
             enum NodeType Nodetype, size_t contentSize, 
@@ -54,7 +57,8 @@ Path_T Node_getPath(Node_T oNNode);
 boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
                          size_t *pulChildID);
 
-/* Returns the number of children that oNParent has. */
+/* Returns the number of children that oNParent has. Returns NULL if
+oNParent is a file, not a directory */
 size_t Node_getNumChildren(Node_T oNParent);
 
 /*
@@ -62,6 +66,7 @@ size_t Node_getNumChildren(Node_T oNParent);
   node of oNParent with identifier ulChildID, if one exists.
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
+  * NOT_A_DIRECTORY if oNParent is a file not a directory
 */
 int Node_getChild(Node_T oNParent, size_t ulChildID,
                   Node_T *poNResult);
@@ -101,7 +106,7 @@ size_t Node_getContentSize(Node_T oNNode);
 
 /* Sets the contents of oNNode to newContents if possible and set the 
 size of the node to contentSize and returns the previous contents oNNode.
-Returns NULL if not possible. */
+Returns NULL if not possible or oNNode is a directory. */
 void* Node_setContents(Node_T oNNode, void* newContents, 
                       size_t contentSize);
 
