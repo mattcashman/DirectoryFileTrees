@@ -288,7 +288,7 @@ int FT_insertFile(const char *pcPath, void *pvContents,
 
    ulDepth = Path_getDepth(oPPath);
    if(oNCurr == NULL) /* new root! */
-      ulIndex = 1;
+      return CONFLICTING_PATH;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
 
