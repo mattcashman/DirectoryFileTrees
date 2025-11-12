@@ -291,7 +291,7 @@ int FT_insertFile(const char *pcPath, void *pvContents,
     /* Check oNCurr is a directory, not a file*/
     if(Node_getType(oNCurr) != DIR) {
         Path_free(oPPath);
-        return BAD_PATH;
+        return NOT_A_DIRECTORY;
     }
    
    ulDepth = Path_getDepth(oPPath);
