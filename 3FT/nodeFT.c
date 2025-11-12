@@ -8,7 +8,6 @@
 #include <string.h>
 #include "dynarray.h"
 #include "nodeFT.h"
-#include "checkerFT.h"
 
 /* A node in a FT */
 struct node {
@@ -73,7 +72,7 @@ static int Node_compareString(const Node_T oNFirst,
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype) {
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype, ulSize contentSize, void* contents) {
    struct node *psNew;
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
@@ -291,4 +290,26 @@ size_t Node_getContentSize(Node_t oNNode) {
    assert(oNNode != NULL);
    assert(oNNode->type == FILE);
    return oNNode->contentsize;
+}
+
+void* Node_SetContents(Node_T oNNode, void* newContents, size_t contentSize) {
+   assert(oNNode != NULL);
+   assert(oNNode->type == FILE);
+
+   /*free previous contents if they exist*/
+   if(oNNode->contents != NULL) {
+      free(oNNode->contents);
+   }
+
+   /* gets the memory space for the new contents*/
+   oNNode->newContents = malloc(contentSize);
+   if(oNNode->contents == NULL) {
+      oNNode->contentSize = 0;
+      return NULL;
+   }
+
+   memcpy(oNNode->contents, newContents, contentSize);
+   oNNode->contentSize = contentSize;
+
+   return oNNode->contents;
 }

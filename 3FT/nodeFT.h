@@ -28,7 +28,7 @@ enum NodeType {DIR, FILE};
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult);
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, enum NodeType Nodetype, ulsize contentSize, void* contents);
 
 /*
   Destroys and frees all memory allocated for the subtree rooted at
@@ -94,5 +94,7 @@ void *Node_getContents(Node_T oNNode);
 
 /*Function returns the number of memory bytes associated with each individual node*/
 size_t Node_getContentSize(Node_T oNNode);
+
+void* Node_SetContents(Node_T oNNode, void* newContents, size_t contentSize);
 
 #endif
