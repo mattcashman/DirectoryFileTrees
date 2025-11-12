@@ -429,7 +429,6 @@ int FT_destroy(void) {
 
 void *FT_getFileContents(const char *pcPath) 
 {
-    Path_T oPPath;
     Node_T oNNode;
     int iStatus;
     
