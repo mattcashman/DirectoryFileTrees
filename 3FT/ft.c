@@ -466,7 +466,7 @@ void *FT_getFileContents(const char *pcPath)
     Node_T oNNode;
     int iStatus;
     
-    if(bIsInitialized)
+    if(!bIsInitialized)
       return NULL;
 
     iStatus = FT_findNode(pcPath, &oNNode);
@@ -486,7 +486,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
     void *pvOldContents;
     int iStatus;
     
-    if(bIsInitialized)
+    if(!bIsInitialized)
       return NULL;
 
     iStatus = FT_findNode(pcPath, &oNNode);
