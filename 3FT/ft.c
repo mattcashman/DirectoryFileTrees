@@ -405,9 +405,10 @@ int FT_rmDir(const char *pcPath) {
        return NOT_A_DIRECTORY;
 
    ulCount -= Node_free(oNFound);
-   if(ulCount == 0 || oNFound == oNRoot)
+   if(ulCount == 0 || oNFound == oNRoot) {
       oNRoot = NULL;
       ulCount = 0;
+   }
 
    return SUCCESS;
 }
