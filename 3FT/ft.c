@@ -270,7 +270,7 @@ int FT_insertFile(const char *pcPath, void *pvContents,
    Node_T oNFirstNew = NULL;
    Node_T oNCurr = NULL;
    size_t ulDepth, ulIndex;
-   size_t ulNewNodes;
+   size_t ulNewNodes = 0;
 
    assert(pcPath != NULL);
 
@@ -405,7 +405,7 @@ int FT_rmDir(const char *pcPath) {
        return NOT_A_DIRECTORY;
 
    ulCount -= Node_free(oNFound);
-   if(ulCount == 0 || oNFound == oNRoot) {
+   if(ulCount == 0) {
       oNRoot = NULL;
       ulCount = 0;
    }
