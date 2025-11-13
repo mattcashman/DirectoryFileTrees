@@ -220,6 +220,13 @@ size_t Node_free(Node_T oNNode) {
       }
       DynArray_free(oNNode->oDChildren);
    }
+   else {
+      /* free contents if file */
+      if(oNNode->contents != NULL) {
+      free(oNNode->contents);
+      oNNode->contents = NULL;
+      }
+   }  
    
 
    /* remove path */
