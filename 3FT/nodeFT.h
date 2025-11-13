@@ -14,6 +14,7 @@
 /* A Node_T is a node in a File Tree */
 typedef struct node *Node_T;
 
+/* Nodetype is used to describe if a node is a file or directory */
 enum NodeType {DIR_T, FILE_T};
 
 /*

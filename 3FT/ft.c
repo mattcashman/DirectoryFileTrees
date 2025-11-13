@@ -53,7 +53,7 @@ static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
    Node_T oNChild = NULL;
    size_t ulDepth;
    size_t i;
-   size_t ulChildID;
+   size_t ulChildID = NULL;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -463,8 +463,10 @@ int FT_destroy(void) {
 
 void *FT_getFileContents(const char *pcPath) 
 {
-    Node_T oNNode;
+    Node_T oNNode = NULL;
     int iStatus;
+
+    assert(pcPath != NULL);
     
     if(!bIsInitialized)
       return NULL;
@@ -482,9 +484,11 @@ void *FT_getFileContents(const char *pcPath)
 void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
                              size_t ulNewLength) 
 {
-    Node_T oNNode;
+    Node_T oNNode = NULL;
     void *pvOldContents;
     int iStatus;
+
+    assert(pcPath != NULL);
     
     if(!bIsInitialized)
       return NULL;
@@ -504,8 +508,12 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
 
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) 
 {
-    Node_T oNNode;
+    Node_T oNNode = NULL;
     int iStatus;
+
+    assert(pcPath != NULL);
+    assert(pbIsFile != NULL);
+    assert(pulSize != NULL);
     
     if(!bIsInitialized)
       return INITIALIZATION_ERROR;
@@ -556,7 +564,7 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
          assert(iStatus == SUCCESS);
 
          if (Node_getType(oNChild) == FILE_T) {
-            DynArray_set(d, i, oNChild);
+            (void) DynArray_set(d, i, oNChild);
             i++;
          }
       }

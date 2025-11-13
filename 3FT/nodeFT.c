@@ -11,7 +11,7 @@
 
 /* A node in a FT */
 struct node {
-   /*determines whether it is a node or a directory*/
+   /*determines whether it is a file or a directory*/
    enum NodeType type;
    /* the object corresponding to the node's absolute path */
    Path_T oPPath;
@@ -21,7 +21,7 @@ struct node {
    DynArray_T oDChildren;
    /* pointer to contents if file */
    void *contents;
-   /*the size of each indivdual node*/
+   /* the size of each node's contents if a file */
    size_t contentSize;
 };
 
