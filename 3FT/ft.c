@@ -507,7 +507,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize)
     Node_T oNNode;
     int iStatus;
     
-    if(bIsInitialized)
+    if(!bIsInitialized)
       return INITIALIZATION_ERROR;
 
     iStatus = FT_findNode(pcPath, &oNNode);
