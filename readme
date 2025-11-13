@@ -17,7 +17,8 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-lecture slides wk 6,7,8, 11
+COS 217 website
+lecture slides wk 6,7,8,11
 Precept handouts wk 6,7,8,11
 class youtube: "COS 217 Fall 2020 Lecture 20B - gdb with ARM"
 
@@ -29,9 +30,9 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-lecture slides wk 6,7,8, 11
+COS 217 website
+lecture slides wk 6,7,8,11
 Precept handouts wk 6,7,8,11
-class youtube: "COS 217 Fall 2020 Lecture 20B - gdb with ARM"
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -87,7 +88,8 @@ Regulations in Princeton's Rights, Rules, Responsibilities guide,
 and the COS 217 Generative AI policy, disclose and describe how you
 used AI in completing this assignment:
 
-
+We occassionally asked AI to explain an error message from valgrind and
+gave it some of our code if we were stuck on finding a bug.
 
 ------------------------------------------------------------------------
 Student 1: What is your assessment of the assignment? Was it helpful?
@@ -101,7 +103,10 @@ to use debugger. I though part 1 was fun and quite useful.
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+Part 1 was more fun to work on than part 2. It felt frustrating to not 
+have the source code when that is what we were trying to debug and it
+was quite difficult to get to grips with part 2. Part 3 was quite fun 
+but a bit tedious to debug after so much debugging.
 
 ------------------------------------------------------------------------
 (optional) What information can you provide about your submission that
@@ -157,7 +162,8 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
-
+None. 
+(Except: "soandso.h: function soandso_function declared but no defined")
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on your Part 3 code, and what are
@@ -165,7 +171,39 @@ your disagreements with them? Copy the critTer warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
+   ft.c: line 216: low priority: 
+   A loop should consist of fewer than 35 lines;
+   this loop consists of 39 lines; consider refactoring
 
+This is listed as an acceptable exception.
+
+   ft.c: line 309: low priority: 
+   A loop should consist of fewer than 35 lines;
+   this loop consists of 42 lines; consider refactoring
+
+This is listed as an acceptable exception.
+
+   ft.c: line 641: low priority: 
+   A file should contain no more than 15 functions;
+   this file contains 17 functions
+
+This is listed as an acceptable exception.
+
+   ft.c: line 267: medium priority:
+   Do you want to validate 'pvContents' through an assert?
+
+pvContents is allowed to be NULL, so no.
+
+   ft.c: line 486: medium priority:
+   Do you want to validate 'pvNewContents' through an assert?
+
+pvNewContents is allowed to be NULL, so no.
+
+   ft.c: line 640: low priority: 
+   A source code file should contain fewer than 500 lines;
+   this file contains 641 lines
+
+This is listed as an acceptable exception.
 
 ------------------------------------------------------------------------
 For each of the five faulty BDT implementations required by Step
@@ -177,13 +215,13 @@ the error manifests itself or is "noticed" by the client.
 
       Executable         Function with the underlying error
 ===============================================================
-         ./bdtBad1	BDT_insert() 
+         ./bdtBad1	   BDT_insert() 
 ---------------------------------------------------------------
          ./bdtBad2      BDT_remove() 
 ---------------------------------------------------------------
          ./bdtBad3      BDT_insert()
 ---------------------------------------------------------------
-         ./bdtBad4	BDT_toString()
+         ./bdtBad4	   BDT_toString()
 ---------------------------------------------------------------
          ./bdtBad5      BDT_destory()  
 ===============================================================
@@ -192,6 +230,14 @@ the error manifests itself or is "noticed" by the client.
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
-check
+Node_compare is somewhat redundant since it only call a Path_compare 
+which could have just been done by the client. Similarly, Node_toString
+just can be done using Path_getPathname and Node_getPath. By removing 
+these two functions, the interface would be more minimal and easier to
+learn. Although they might improve the client's readability, they aren't
+necessary. However, this does strengthen the coupling to the Path 
+module which isn't desirable.
+
+We think the DT interface is good as it is.
 
 ------------------------------------------------------------------------
