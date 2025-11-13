@@ -174,7 +174,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult,
       psNew->contents = NULL;
       psNew->contentSize = 0;
    } else {
-      psNew->type = FILE_T;
+      psNew->type = Nodetype;
       psNew->oDChildren = NULL;
       psNew->contents = contents;
       psNew->contentSize = contentSize;
@@ -220,13 +220,13 @@ size_t Node_free(Node_T oNNode) {
       }
       DynArray_free(oNNode->oDChildren);
    }
-   else {
-      /* free contents if file */
+ /*  else {
+      /* free contents if file *//*
       if(oNNode->contents != NULL) {
       free(oNNode->contents);
       oNNode->contents = NULL;
       }
-   }  
+   }  */
    
 
    /* remove path */
