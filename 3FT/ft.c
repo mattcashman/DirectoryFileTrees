@@ -540,34 +540,41 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize)
 */
 static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    size_t c;
-   DynArray_T childDirs;
+   size_t numChildren;
 
    assert(d != NULL);
 
-   childDirs = DynArray_new(0);
-
    if(n != NULL) {
-      (void) DynArray_set(d, i, n);
-      i++;
-      for(c = 0; c < Node_getNumChildren(n); c++) {
+       /* Add this node to the array*/
+       (void) DynArray_set(d, i, n);
+       i++;
+       
+       numChildren = Node_getNumChildren(n);
+    /* Add all the file children to the array */
+      for(c = 0; c < numChildren; c++) {
          int iStatus;
          Node_T oNChild = NULL;
          iStatus = Node_getChild(n,c, &oNChild);
          assert(iStatus == SUCCESS);
 
-         if (Node_getType(oNChild) == DIR_T) {
-            DynArray_add(childDirs, oNChild);
-         } else {
+         if (Node_getType(oNChild) == FILE_T) {
             DynArray_set(d, i, oNChild);
             i++;
          }
       }
-      for (c = 0; c < DynArray_getLength(childDirs); c++) {
-        i = FT_preOrderTraversal(DynArray_get(childDirs, c), d, i);
+    
+    /* Run preOrderTraversal on all directory children */
+      for(c = 0; c < numChildren; c++) {
+         int iStatus;
+         Node_T oNChild = NULL;
+         iStatus = Node_getChild(n,c, &oNChild);
+         assert(iStatus == SUCCESS);
+         if (Node_getType(oNChild) == DIR_T) {
+            i = FT_preOrderTraversal(oNChild, d, i);
+         }
       }
    }
 
-   DynArray_free(childDirs);
    return i;
 }
 
