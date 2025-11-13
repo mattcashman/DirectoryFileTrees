@@ -294,7 +294,7 @@ int FT_insertFile(const char *pcPath, void *pvContents,
        Path_free(oPPath);
        return CONFLICTING_PATH;
     }
-    
+
     ulDepth = Path_getDepth(oPPath);
     ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
 
@@ -405,8 +405,9 @@ int FT_rmDir(const char *pcPath) {
        return NOT_A_DIRECTORY;
 
    ulCount -= Node_free(oNFound);
-   if(ulCount == 0)
+   if(ulCount == 0 || oNFound == oNRoot)
       oNRoot = NULL;
+      ulCount = 0;
 
    return SUCCESS;
 }
