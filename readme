@@ -17,6 +17,9 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
+lecture slides wk 6,7,8, 11
+Precept handouts wk 6,7,8,11
+class youtube: "COS 217 Fall 2020 Lecture 20B - gdb with ARM"
 
 
 ------------------------------------------------------------------------
@@ -26,7 +29,9 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+lecture slides wk 6,7,8, 11
+Precept handouts wk 6,7,8,11
+class youtube: "COS 217 Fall 2020 Lecture 20B - gdb with ARM"
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -40,7 +45,7 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None
 
 ------------------------------------------------------------------------
 Student 2: What unauthorized sources of information did you use to
@@ -54,7 +59,7 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None
 
 ------------------------------------------------------------------------
 Student 1: In fulfillment of the requirement from section 2.4.3 of the
@@ -63,7 +68,7 @@ guide, enter your name in the space below the following affirmation:
 
 This paper represents my own work in accordance with University
 regulations.
-
+Matthew Cashman
 
 
 ------------------------------------------------------------------------
@@ -73,7 +78,7 @@ guide, enter your name in the space below the following affirmation:
 
 This paper represents my own work in accordance with University
 regulations.
-
+Alex Perkins
 
 
 ------------------------------------------------------------------------
@@ -88,7 +93,9 @@ used AI in completing this assignment:
 Student 1: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+I thought this assignemnt was very difficult with special mention To
+part 2. I thought this assignment was useful in terms of leanring how 
+to use debugger. I though part 1 was fun and quite useful. 
 
 ------------------------------------------------------------------------
 Student 2: What is your assessment of the assignment? Was it helpful?
