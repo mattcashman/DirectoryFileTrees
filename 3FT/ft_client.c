@@ -71,7 +71,9 @@ int main(void) {
      ALREADY_IN_TREE, and trying to insert some other root should
      return CONFLICTING_PATH.
   */
+ fprintf(stderr, "pre insertDir");
   assert(FT_insertDir("1root/2child/3gkid") == SUCCESS);
+  fprintf(stderr, "post insertDir");
   assert(FT_containsDir("1root") == TRUE);
   assert(FT_containsFile("1root") == FALSE);
   assert(FT_containsDir("1root/2child") == TRUE);
@@ -92,19 +94,25 @@ int main(void) {
   assert(FT_insertFile("1otherroot/2f", NULL, 0) == CONFLICTING_PATH);
 
   /* Trying to insert a third child should succeed, unlike in BDT */
+fprintf(stderr, "pre insertFile");
   assert(FT_insertFile("1root/2third", NULL, 0) == SUCCESS);
+  fprintf(stderr, "post insertFile");
   assert(FT_insertDir("1root/2ok/3yes/4indeed") == SUCCESS);
   assert(FT_containsDir("1root") == TRUE);
+  fprintf(stderr, "pre containsDir");
   assert(FT_containsDir("1root/2child") == TRUE);
+  fprintf(stderr, "post containsDir");
   assert(FT_containsDir("1root/2second") == TRUE);
   assert(FT_containsDir("1root/2third") == FALSE);
+  fprintf(stderr, "pre containsFile");
   assert(FT_containsFile("1root/2third") == TRUE);
+  fprintf(stderr, "post containsFile");
   assert(FT_containsDir("1root/2ok") == TRUE);
   assert(FT_containsDir("1root/2ok/3yes") == TRUE);
   assert(FT_containsDir("1root/2ok/3yes/4indeed") == TRUE);
-  fprintf(stderr, "-");
+  fprintf(stderr, "pre toString");
   assert((temp = FT_toString()) != NULL);
-  fprintf(stderr, "-");
+  fprintf(stderr, "post toString");
   fprintf(stderr, "Checkpoint 1:\n%s\n", temp);
   free(temp);
 
