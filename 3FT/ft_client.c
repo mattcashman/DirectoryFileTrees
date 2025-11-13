@@ -102,7 +102,7 @@ int main(void) {
   assert(FT_containsDir("1root/2ok") == TRUE);
   assert(FT_containsDir("1root/2ok/3yes") == TRUE);
   assert(FT_containsDir("1root/2ok/3yes/4indeed") == TRUE);
-  fprintf(stderr, "");
+  fprintf(stderr, "-");
   assert((temp = FT_toString()) != NULL);
   fprintf(stderr, "Checkpoint 1:\n%s\n", temp);
   free(temp);

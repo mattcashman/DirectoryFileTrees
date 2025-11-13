@@ -61,7 +61,7 @@ static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
    /* root is NULL -> won't find anything */
    if(oNRoot == NULL) {
       *poNFurthest = NULL;
-      return NO_SUCH_PATH;
+      return SUCCESS;
    }
 
    iStatus = Path_prefix(oPPath, 1, &oPPrefix);
@@ -290,24 +290,20 @@ int FT_insertFile(const char *pcPath, void *pvContents,
       return iStatus;
    }
 
-   if(oNCurr == NULL && oNRoot != NULL) {
-      Path_free(oPPath);
-      return CONFLICTING_PATH;
-   }
+   if(oNCurr == NULL) /* new root! */ {
+       Path_free(oPPath);
+       return CONFLICTING_PATH;
+    }
+    
+    ulDepth = Path_getDepth(oPPath);
+    ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
 
-   ulDepth = Path_getDepth(oPPath);
-   if(oNCurr == NULL) /* new root! */
-      return CONFLICTING_PATH;
-   else {
-      ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
-
-      /* oNCurr is the node we're trying to insert */
-      if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
+    /* oNCurr is the node we're trying to insert */
+    if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
-         Path_free(oPPath);
-         return ALREADY_IN_TREE;
-      }
-   }
+        Path_free(oPPath);
+        return ALREADY_IN_TREE;
+    }
 
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
